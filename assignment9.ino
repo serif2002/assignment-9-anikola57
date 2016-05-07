@@ -5,7 +5,7 @@ Odometer encoderLeft(190), encoderRight(190); //Βάλτε τους δικούς
 Gyroscope gyro(13); //Βάλτε την κατάλληλη τιμή σύμφωνα με το γυροσκόπιό σας
 Car folkracer;
 SR04 sonarLeft, sonarRight, sonarFront; //dilwse tis metavlites sonarLeft, sonarRight kai sonarFront pou antiproswpevoun tous iperixous
-SoftwareSerial bluetooth(6,7); //συνδέστε το bluetooth ως εξής: Το RX του Bluetooth στο pin 6 και το ΤΧ του bluetooth στο pin 7 (VCC -> 5V, GND -> GND)
+SoftwareSerial bluetooth(6, 7); //συνδέστε το bluetooth ως εξής: Το RX του Bluetooth στο pin 6 και το ΤΧ του bluetooth στο pin 7 (VCC -> 5V, GND -> GND)
 
 /* Χρησιμοποιήστε τα σωστά pins!!!! */
 const int SONAR_LEFT_TRIGGER = 4; //trigger του αριστερού υπέρηχου
@@ -29,7 +29,7 @@ void setup() {
   folkracer.enableCruiseControl(); //ξεκινάει τον έλεγχο της ταχύτητας του αυτοκινήτου
   gyro.begin(); //ξεκινάει τις μετρήσεις στο γυροσκόπειο
   /* Εάν θέλετε να διαβάσετε απλά τις αποστάσεις, δίχως να κινείται το αυτοκινητάκι, βάλτε ταχύτητα 0 στην παρακάτω γραμμή */
-  folkracer.setSpeed(0); //θέτει την ταχύτητα στο αυτοκινητάκι στα 0.2 μέτρα ανά δευτερόλεπτο (εάν είναι πολύ αργό, αυξήστε λίγο την ταχύτητα)
+  folkracer.setSpeed(0.5); //θέτει την ταχύτητα στο αυτοκινητάκι στα 0.2 μέτρα ανά δευτερόλεπτο (εάν είναι πολύ αργό, αυξήστε λίγο την ταχύτητα)
   folkracer.setAngle(0); //Το αυτοκινητάκι πηγαίνει ευθεία
 }
 
@@ -48,5 +48,29 @@ void loop() {
   //από ότι τον αριστερό, στρίψτε δεξιά, αλλιώς αριστερά. Το πόσο θα στρίψετε αριστερά, με το folkracer.setAngle θα το βρείτε πειραματικά. Αρχίστε τις δοκιμές με το setAngle(50).
   //Εάν βρίσκει εμπόδιο μπροστά σε κοντινή απόσταση, ας στρίβει προς τα δεξιά κατά 75 μοίρες, με το setAngle.
   //Στο σχολείο, να διαβάζετε (στο serial monitor του Arduino IDE) τις αποστάσεις που ανιχνεύει το αυτοκινητάκι ασύρματα μέσω bluetooth, έτσι ώστε να καταλάβετε τι "διαβάζει"
-  //το αυτοκινητάκι όταν κινείται στην πίστα!  
+  //το αυτοκινητάκι όταν κινείται στην πίστα!
+  if (rightDistance > leftDistance && leftDistance < 30 && leftDistance > 0 ) {
+    folkracer.setAngle(60);
+  }
+  if (leftDistance > rightDistance && rightDistance < 30 && rightDistance > 0) {
+    folkracer.setAngle(-60);
+  }
+  if (frontDistance < 20) {
+    folkracer.setAngle(80);
+  }
+  if (leftDistance == 0 && rightDistance == 0) {
+    folkracer.setAngle(0);
+  }
+  if (rightDistance < 30 && rightDistance > 0 && leftDistance < 30 && leftDistance > 0) {
+    folkracer.setAngle(0);
+  }
+  if (rightDistance < 30 && rightDistance > 0 && leftDistance == 0) {
+    folkracer.setAngle(-60);
+  }
+  if (rightDistance > 30 && leftDistance == 0) {
+    folkracer.setAngle(0);
+  }
+  if (leftDistance < 30 && leftDistance > 0) {
+    folkracer.setAngle(60);
+  }
 }
